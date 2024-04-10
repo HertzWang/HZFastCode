@@ -14,15 +14,12 @@
 		0BB3A79D2018844B005C0A7F /* HZUserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3A79C2018844B005C0A7F /* HZUserConfig.swift */; };
 		1B063CF72519D9ED005307C3 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1B063CF62519D9ED005307C3 /* README.md */; };
 		1B2A73CC2306B1AE00C8E202 /* HZAppMacro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A73CB2306B1AE00C8E202 /* HZAppMacro.swift */; };
-		1BA9708E23014E0D0085B3A1 /* HZConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9708C23014E0D0085B3A1 /* HZConfigurationViewController.swift */; };
-		1BA9708F23014E0D0085B3A1 /* HZConfigurationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BA9708D23014E0D0085B3A1 /* HZConfigurationViewController.xib */; };
+		1BA6F3A52BC68D8C00A022A8 /* HZTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA6F3A42BC68D8C00A022A8 /* HZTools.swift */; };
 		1BA970A32303FFED0085B3A1 /* code_html in Resources */ = {isa = PBXBuildFile; fileRef = 1BA970A22303FFED0085B3A1 /* code_html */; };
 		1BA970A523040CFA0085B3A1 /* help_html in Resources */ = {isa = PBXBuildFile; fileRef = 1BA970A423040CFA0085B3A1 /* help_html */; };
 		DB0D99A8224B5C0700F088A6 /* HZConfigModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0D99A7224B5C0700F088A6 /* HZConfigModel.swift */; };
 		DB4FA10523018C2D00583898 /* HZEnumNotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4FA10423018C2D00583898 /* HZEnumNotificationModel.swift */; };
 		DB4FA10A2301A20E00583898 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB4FA1092301A20E00583898 /* WebKit.framework */; };
-		DB9C68CF224B73FB00FE8771 /* HZHelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9C68CD224B73FB00FE8771 /* HZHelpWindowController.swift */; };
-		DB9C68D0224B73FB00FE8771 /* HZHelpWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB9C68CE224B73FB00FE8771 /* HZHelpWindowController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,15 +47,12 @@
 		0BB3A79C2018844B005C0A7F /* HZUserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZUserConfig.swift; sourceTree = "<group>"; };
 		1B063CF62519D9ED005307C3 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1B2A73CB2306B1AE00C8E202 /* HZAppMacro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZAppMacro.swift; sourceTree = "<group>"; };
-		1BA9708C23014E0D0085B3A1 /* HZConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZConfigurationViewController.swift; sourceTree = "<group>"; };
-		1BA9708D23014E0D0085B3A1 /* HZConfigurationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HZConfigurationViewController.xib; sourceTree = "<group>"; };
+		1BA6F3A42BC68D8C00A022A8 /* HZTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZTools.swift; sourceTree = "<group>"; };
 		1BA970A22303FFED0085B3A1 /* code_html */ = {isa = PBXFileReference; lastKnownFileType = folder; path = code_html; sourceTree = "<group>"; };
 		1BA970A423040CFA0085B3A1 /* help_html */ = {isa = PBXFileReference; lastKnownFileType = folder; path = help_html; sourceTree = "<group>"; };
 		DB0D99A7224B5C0700F088A6 /* HZConfigModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZConfigModel.swift; sourceTree = "<group>"; };
 		DB4FA10423018C2D00583898 /* HZEnumNotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZEnumNotificationModel.swift; sourceTree = "<group>"; };
 		DB4FA1092301A20E00583898 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		DB9C68CD224B73FB00FE8771 /* HZHelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HZHelpWindowController.swift; sourceTree = "<group>"; };
-		DB9C68CE224B73FB00FE8771 /* HZHelpWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HZHelpWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +88,7 @@
 		0BB3A76B201856AD005C0A7F /* HZFastCode */ = {
 			isa = PBXGroup;
 			children = (
+				1BA6F3A32BC68D6C00A022A8 /* Tool */,
 				1B11E89A22FD473B00AC78B2 /* AppDelegate */,
 				1B11E89B22FD477B00AC78B2 /* Sections */,
 				1BA9708B23014DB20085B3A1 /* Models */,
@@ -126,8 +121,6 @@
 			isa = PBXGroup;
 			children = (
 				DB9D5343224C5F8F009DCDAF /* Main */,
-				DB9C68CC224B73E900FE8771 /* Help */,
-				DB9C68CA224B737600FE8771 /* Configuration */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -149,6 +142,14 @@
 			path = Macro;
 			sourceTree = "<group>";
 		};
+		1BA6F3A32BC68D6C00A022A8 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				1BA6F3A42BC68D8C00A022A8 /* HZTools.swift */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
 		1BA9708B23014DB20085B3A1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,15 +157,6 @@
 				DB4FA10423018C2D00583898 /* HZEnumNotificationModel.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		DB9C68CA224B737600FE8771 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				1BA9708C23014E0D0085B3A1 /* HZConfigurationViewController.swift */,
-				1BA9708D23014E0D0085B3A1 /* HZConfigurationViewController.xib */,
-			);
-			path = Configuration;
 			sourceTree = "<group>";
 		};
 		DB9C68CB224B737A00FE8771 /* Supporting Files */ = {
@@ -176,15 +168,6 @@
 				0BB3A776201856AD005C0A7F /* HZFastCode.entitlements */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		DB9C68CC224B73E900FE8771 /* Help */ = {
-			isa = PBXGroup;
-			children = (
-				DB9C68CD224B73FB00FE8771 /* HZHelpWindowController.swift */,
-				DB9C68CE224B73FB00FE8771 /* HZHelpWindowController.xib */,
-			);
-			path = Help;
 			sourceTree = "<group>";
 		};
 		DB9D5343224C5F8F009DCDAF /* Main */ = {
@@ -269,10 +252,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BA970A32303FFED0085B3A1 /* code_html in Resources */,
-				1BA9708F23014E0D0085B3A1 /* HZConfigurationViewController.xib in Resources */,
 				0BB3A771201856AD005C0A7F /* Assets.xcassets in Resources */,
 				1B063CF72519D9ED005307C3 /* README.md in Resources */,
-				DB9C68D0224B73FB00FE8771 /* HZHelpWindowController.xib in Resources */,
 				1BA970A523040CFA0085B3A1 /* help_html in Resources */,
 				0BB3A774201856AD005C0A7F /* Main.storyboard in Resources */,
 			);
@@ -288,10 +269,9 @@
 				1B2A73CC2306B1AE00C8E202 /* HZAppMacro.swift in Sources */,
 				0BB3A76F201856AD005C0A7F /* ViewController.swift in Sources */,
 				0BB3A79D2018844B005C0A7F /* HZUserConfig.swift in Sources */,
-				DB9C68CF224B73FB00FE8771 /* HZHelpWindowController.swift in Sources */,
+				1BA6F3A52BC68D8C00A022A8 /* HZTools.swift in Sources */,
 				0BB3A76D201856AD005C0A7F /* AppDelegate.swift in Sources */,
 				DB0D99A8224B5C0700F088A6 /* HZConfigModel.swift in Sources */,
-				1BA9708E23014E0D0085B3A1 /* HZConfigurationViewController.swift in Sources */,
 				DB4FA10523018C2D00583898 /* HZEnumNotificationModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -425,12 +405,12 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 64Z9QAXW9D;
+				DEVELOPMENT_TEAM = 926PZTWPWV;
 				INFOPLIST_FILE = "$(SRCROOT)/HZFastCode/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hertzwang.fastcode;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hertzwang.FT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -446,12 +426,12 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 64Z9QAXW9D;
+				DEVELOPMENT_TEAM = 926PZTWPWV;
 				INFOPLIST_FILE = "$(SRCROOT)/HZFastCode/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hertzwang.fastcode;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hertzwang.FT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

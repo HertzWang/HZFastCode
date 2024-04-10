@@ -14,8 +14,20 @@ class ViewController: NSViewController {
     // MARK: - Property
     
     @IBOutlet private weak var tableView: NSTableView!
-    @IBOutlet fileprivate weak var codeWebView: WebView!
+    @IBOutlet fileprivate weak var codeWebView: WKWebView!
     @IBOutlet fileprivate weak var sortArrowButon: NSButton!
+    @IBOutlet weak var newButton: NSButton!
+    
+    // edit view
+    @IBOutlet weak var editView: NSView!
+    @IBOutlet weak var editTitleTF: NSTextField!
+    @IBOutlet weak var editSummaryTF: NSTextField!
+    @IBOutlet var editContentView: NSTextView!
+    @IBOutlet weak var editLanguageBox: NSComboBox!
+    @IBOutlet weak var editPlatformBox: NSComboBox!
+    @IBOutlet weak var editPrefixTF: NSTextField!
+    @IBOutlet weak var editScopesBox: NSComboBox!
+    
     fileprivate weak var searchField: NSSearchField?
     fileprivate weak var publishButton: NSButton?
     
@@ -44,18 +56,7 @@ class ViewController: NSViewController {
         }
         return nil
     }
-    
-    lazy fileprivate var configViewController: HZConfigurationViewController = {
-        let configViewController = HZConfigurationViewController.init(nibName: NSNib.Name.init("HZConfigurationViewController"), bundle: Bundle.main)
-        configViewController.delegate = self
-        return configViewController
-    }()
-    
-    lazy fileprivate var helpWindow: HZHelpWindowController = {
-        let helpWindow = HZHelpWindowController(windowNibName: NSNib.Name.init("HZHelpWindowController"))
-        
-        return helpWindow
-    }()
+    fileprivate var editModel: HZConfigModel?
     
     // MARK: - Override
     
@@ -76,6 +77,7 @@ class ViewController: NSViewController {
         
         initSearchField()
         initCodeWebView()
+        initEditView()
     }
     
     override var representedObject: Any? {
@@ -88,12 +90,12 @@ class ViewController: NSViewController {
     
     /// 初始化数据
     private func initData(map: [String : HZConfigModel]? = nil) {
-        let mapping = map ?? HZUserConfig.shared.mapping
+//        let mapping = map ?? HZUserConfig.shared.mapping
         var arr: [HZConfigModel] = []
-        for (key, value) in mapping {
-            let model = HZConfigModel.model(key, value.contents)
-            arr.append(model)
-        }
+//        for (key, value) in mapping {
+//            let model = HZConfigModel.model(key, value.contents)
+//            arr.append(model)
+//        }
         
         self.dataModels = arr
         self.dataArray = self.dataModels
@@ -133,12 +135,20 @@ class ViewController: NSViewController {
     
     /// 初始化预览Web
     private func initCodeWebView() {
-        guard self.codeWebView?.mainFrameURL == nil else {
-            return
-        }
+        guard codeWebView.url == nil else { return }
+        
         if let request = self.helpRequest {
-            self.codeWebView?.mainFrame.load(request)
+            self.codeWebView?.load(request)
         }
+    }
+    
+    /// 初始化编辑视图
+    private func initEditView() {
+        editView.wantsLayer = true
+        editView.layer?.backgroundColor = NSColor.clear.cgColor
+        editView.layer?.borderColor = NSColor.systemGray.cgColor
+        editView.layer?.borderWidth = 1
+        editView.layer?.cornerRadius = 5
     }
     
     /// 保存数据
@@ -155,18 +165,10 @@ class ViewController: NSViewController {
     /// 刷新列表
     fileprivate func reloadData() {
         self.tableView.reloadData()
-        self.codeWebView.mainFrame.load(self.helpRequest!)
+        self.codeWebView.load(self.helpRequest!)
     }
     
     // MARK: -  Action
-    
-    /// 添加配置信息
-    ///
-    /// - Parameter sender: 添加按钮
-    @IBAction fileprivate func addConfigAction(_ sender: NSButton) {
-        self.configViewController.model(nil)
-        self.presentAsSheet(self.configViewController)
-    }
     
     /// 删除配置信息
     ///
@@ -196,19 +198,56 @@ class ViewController: NSViewController {
         }
     }
     
-    /// 编辑配置信息
-    ///
-    /// - Parameter sender: 编辑按钮/双击的TableView
-    @IBAction func editConfigAction(_ sender: Any) {
-        guard self.tableView.selectedRow >= 0 else {
+    @IBAction func newAction(_ sender: Any) {
+        showEditView(true)
+    }
+    
+    @IBAction func editDeleteAction(_ sender: Any) {
+        showEditView(false)
+    }
+    
+    @IBAction func editDoneAction(_ sender: Any) {
+//        if isEdit {
+//            self.dataArray[tableView.selectedRow] = model
+//            self.dataModels.removeAll { (configModel) -> Bool in
+//                return (configModel.prefix.elementsEqual(model.prefix))
+//            }
+//        } else {
+//            if self.searchField!.stringValue.isEmpty {
+//                self.dataArray.append(model)
+//            } else if model.prefix.contains(self.searchField!.stringValue) {
+//                self.dataArray.append(model)
+//            }
+//        }
+//        self.dataModels.append(model)
+//        
+//        self.reloadData()
+//        saveConfig()
+        
+        if let prefix = editPrefixTF?.stringValue, !prefix.isEmpty,
+           let contents = editContentView?.string, !contents.isEmpty,
+           let title = editTitleTF?.stringValue,
+           let summary = editSummaryTF?.stringValue,
+           let language = editLanguageBox?.stringValue,
+           let platform = editPlatformBox?.stringValue,
+           let scopes = editPlatformBox?.stringValue {
+            
+            
+            if let model = self.editModel {
+                // edit
+                
+            } else {
+                // create
+                let model = HZConfigModel.model(title: title, summary: summary, contents: contents, language: language, prefix: prefix, scopes: [scopes])
+                self.dataArray.append(model)
+            }
+            self.reloadData()
+        } else {
             return
         }
         
-        let item = self.dataArray[self.tableView.selectedRow]
-        self.configViewController.model(item)
-        self.presentAsSheet(self.configViewController)
+        showEditView(false)
     }
-    
     /// 导入配置
     ///
     /// - Parameter sender: 按钮
@@ -295,10 +334,24 @@ class ViewController: NSViewController {
     }
     
     /// 显示帮助
-    ///
-    /// - Parameter sender: 按钮
-    @IBAction fileprivate func helpAction(_ sender: Any) {
-        self.helpWindow.show(self)
+    fileprivate func showHhelpView() {
+        self.codeWebView.load(self.helpRequest!)
+    }
+    
+    fileprivate func showEditView(_ isShow: Bool) {
+        editView.isHidden = !isShow
+        newButton.isHidden = isShow
+        codeWebView.isHidden = isShow
+        
+        if !isShow {
+            editTitleTF.stringValue = "My Code Snippet"
+            editSummaryTF.stringValue = ""
+            editContentView.string = ""
+            editLanguageBox.selectItem(at: 0)
+            editPlatformBox.selectItem(at: 0)
+            editPrefixTF.stringValue = ""
+            editScopesBox.selectItem(at: 0)
+        }
     }
     
     /// 发布
@@ -334,7 +387,7 @@ class ViewController: NSViewController {
                 break
                 
             case .help?:
-                self.helpWindow.show(self)
+                showHhelpView()
                 break
                 
             default: break
@@ -360,12 +413,12 @@ extension ViewController: NSTableViewDelegate {
     func tableViewSelectionDidChange(_ notification: Notification) {
         let tableView = notification.object as! NSTableView
         if (tableView.selectedRow < 0) {
-            self.codeWebView.mainFrame.load(self.helpRequest!)
+            self.codeWebView.load(self.helpRequest!)
             return
         }
         let item = self.dataArray[self.tableView.selectedRow]
         if let html = self.htmlCode?.replacingOccurrences(of: kFCShowPlaceholderText, with: item.contents) {
-            self.codeWebView.mainFrame.loadHTMLString(html, baseURL: URL.init(fileURLWithPath: self.showCodeFilePath!))
+            self.codeWebView.loadHTMLString(html, baseURL: URL.init(fileURLWithPath: self.showCodeFilePath!))
         }
     }
     
@@ -400,6 +453,7 @@ extension ViewController: NSTableViewDelegate {
         
         if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier.init(cellIdentifier), owner: self) as? NSTableCellView {
             cell.textField?.stringValue = text
+            
             return cell
         }
         return nil
@@ -426,38 +480,5 @@ extension ViewController: NSSearchFieldDelegate {
             }
             self.reloadData()
         }
-    }
-}
-
-// MARK: - WebUIDelegate
-
-extension ViewController: WebUIDelegate {
-    // 禁用右键
-    func webView(_ sender: WebView!, contextMenuItemsForElement element: [AnyHashable : Any]!, defaultMenuItems: [Any]!) -> [Any]! {
-        return []
-    }
-}
-
-// MARK: - HZConfigurationViewControllerProtocol
-
-extension ViewController: HZConfigurationViewControllerProtocol {
-    func modifyModel(model: HZConfigModel, isEdit: Bool) {
-        self.configViewController.dismiss(nil)
-        if isEdit {
-            self.dataArray[tableView.selectedRow] = model
-            self.dataModels.removeAll { (configModel) -> Bool in
-                return (configModel.prefix.elementsEqual(model.prefix))
-            }
-        } else {
-            if self.searchField!.stringValue.isEmpty {
-                self.dataArray.append(model)
-            } else if model.prefix.contains(self.searchField!.stringValue) {
-                self.dataArray.append(model)
-            }
-        }
-        self.dataModels.append(model)
-        
-        self.reloadData()
-        saveConfig()
     }
 }

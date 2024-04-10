@@ -16,11 +16,11 @@ class HZUserConfig: NSObject {
     
     private override init() {
         sharedUserDefaults = UserDefaults(suiteName: kFCUserConfigSuiteName)
-        if let map = sharedUserDefaults.value(forKey: kFCMappingOldKey) as? [String: String] {
-            for (key, value) in map {
-                mapping[key] = HZConfigModel.model(key, value)
-            }
-        }
+//        if let map = sharedUserDefaults.value(forKey: kFCMappingOldKey) as? [String: String] {
+//            for (key, value) in map {
+//                mapping[key] = HZConfigModel.model(key, value)
+//            }
+//        }
         if let map = sharedUserDefaults.value(forKey: kFCMappingKey) as? [String: String] {
             for (key, json) in map {
                 mapping[key] = HZConfigModel.model(json)
@@ -133,7 +133,9 @@ class HZUserConfig: NSObject {
         if let scptURL = URL.init(string: scptPath) {
             try? FileManager.default.removeItem(at: scptURL)
             try? scpt.data(using: .utf8)?.write(to: scptURL)
-            NSWorkspace.shared.openFile(scptPath)
+            if let pathUrl = URL(string: scptPath) {
+                NSWorkspace.shared.open(pathUrl)
+            }
         }
     }
 }

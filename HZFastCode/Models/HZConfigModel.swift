@@ -9,40 +9,43 @@
 import Cocoa
 import CommonCrypto
 
-/*
- 
-一共有六项不同，分别是：前缀、作用域、内容、标识符、概要、标题
- 第一版：可输入前缀和内容，标题、概要同前缀，使用域为All，标识符根据规则自动生成
- 第二版：可修改标题、概要、使用域
- 第三版：可修改言语和平台
- 
-*/
-
 
 class HZConfigModel: NSObject {
-    var prefix: String = "" /// 代码块前缀
-    var contents: String = "" /// 代码块内容
-    var title: String = "" /// 代码块标题
-    var summary: String = "" /// 代码块概要
-    var scopes: String = "" /// 代码块作用域
+    
+    var title: String = "" /// 标题
+    var summary: String = "" /// 概要
+    var contents: String = "" /// 内容
+    var language: String = "" /// 语言
+    var prefix: String = "" /// 前缀
+    var scopes: String = "" /// 作用域
     var identifier: String = "" /// 代码块唯一标识符 MD5如：FF167DB4-0C2D-4F6D-9A2B-0C0785239FFB
     
-    class func model(_ prefix: String, _ contents: String) -> HZConfigModel {
-        let model = HZConfigModel();
-        model.prefix = prefix
+    class func model(title: String = "", summary: String = "", contents: String, language: String = "Swift", prefix: String, scopes: [String] = ["All"]) -> HZConfigModel {
+        
+        let model = HZConfigModel()
+        model.title = title
+        model.summary = summary
         model.contents = contents
+        model.language = language
+        model.prefix = prefix
+        scopes.forEach { scope in
+            model.scopes += "<string>\(scope)</string>\n"
+        }
+        model.identifier = kFCSnippetIdentifierPrefix.appending(prefix).hz_md5()
         
         return model
     }
     
-    class func model(_ json: String) -> HZConfigModel {
-        let model = HZConfigModel();
-        guard let data = json.data(using: .utf8) else { return model }
+    class func model(_ json: String) -> HZConfigModel? {
+        guard let data = json.data(using: .utf8) else { return nil }
+        
+        let model = HZConfigModel()
         if let dict = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: String] {
-            model.prefix = dict["prefix"] ?? ""
-            model.contents = dict["contents"] ?? ""
             model.title = dict["title"] ?? ""
             model.summary = dict["summary"] ?? ""
+            model.contents = dict["contents"] ?? ""
+            model.language = dict["language"] ?? ""
+            model.prefix = dict["prefix"] ?? ""
             model.scopes = dict["scopes"] ?? ""
             model.identifier = dict["identifier"] ?? ""
         }
@@ -70,21 +73,21 @@ class HZConfigModel: NSObject {
             <plist version="1.0">
             <dict>
                 <key>IDECodeSnippetCompletionPrefix</key>
-                <string>代码块前缀</string>
+                <string>FastCodePrefix</string>
                 <key>IDECodeSnippetCompletionScopes</key>
                 <array>
-                    <string>代码块作用域</string>
+                    FastCodeScopes
                 </array>
                 <key>IDECodeSnippetContents</key>
-                <string>代码块内容</string>
+                <string>FastCodeContents</string>
                 <key>IDECodeSnippetIdentifier</key>
-                <string>代码块唯一标识符</string>
+                <string>FastCodeIdentifier</string>
                 <key>IDECodeSnippetLanguage</key>
-                <string>Xcode.SourceCodeLanguage.Objective-C</string>
+                <string>Xcode.SourceCodeLanguage.FastCodeLanguage</string>
                 <key>IDECodeSnippetSummary</key>
-                <string>代码块概要</string>
+                <string>FastCodeSummary</string>
                 <key>IDECodeSnippetTitle</key>
-                <string>代码块标题</string>
+                <string>FastCodeTitle</string>
                 <key>IDECodeSnippetUserSnippet</key>
                 <true/>
                 <key>IDECodeSnippetVersion</key>
@@ -92,23 +95,27 @@ class HZConfigModel: NSObject {
             </dict>
             </plist>
             """
+        
+        text = text.replacingOccurrences(of: kFCIDECodeSnippetTitle, with: self.title)
+        text = text.replacingOccurrences(of: kFCIDECodeSnippetSummary, with: self.summary)
+        text = text.replacingOccurrences(of: kFCIDECodeSnippetContents, with: self.contents)
+        text = text.replacingOccurrences(of: kFCIDECodeSnippetLnaguage, with: self.language)
         text = text.replacingOccurrences(of: kFCIDECodeSnippetCompletionPrefix, with: self.prefix)
         text = text.replacingOccurrences(of: kFCIDECodeSnippetCompletionScopes, with: self.scopes)
-        text = text.replacingOccurrences(of: kFCIDECodeSnippetContents, with: self.contents)
         text = text.replacingOccurrences(of: kFCIDECodeSnippetIdentifier, with: self.identifier)
-        text = text.replacingOccurrences(of: kFCIDECodeSnippetSummary, with: self.summary)
-        text = text.replacingOccurrences(of: kFCIDECodeSnippetTitle, with: self.title)
+        
         return text.data(using: .utf8) ?? data()
     }
     
     fileprivate func dictValue() -> [String: String] {
         return [
-            "prefix" : self.prefix,
+            "title" : self.title,
+            "summary" : self.summary,
             "contents" : self.contents,
-            "title" : self.prefix,
-            "summary" : self.prefix,
-            "scopes" : "All",
-            "identifier" : kFCSnippetIdentifierPrefix.appending(self.prefix).hz_md5()
+            "language" : self.language,
+            "prefix" : self.prefix,
+            "scopes" : self.scopes,
+            "identifier" : self.identifier,
         ]
     }
 }
@@ -134,39 +141,97 @@ extension String {
 }
 
 /*
+ 描述：
  
- 1.  代码块前缀 IDECodeSnippetCompletionPrefix 对应的 string
- 2.  代码块作用域 IDECodeSnippetCompletionScopes 对应的 array<string>，目前已知有 All、CodeBlock
- 3.  代码块内容 IDECodeSnippetContents 对应的 string，其中填充部份以 &lt;#  开头并以 #&gt; 结尾，Xcode中是填充部分
- 4.  代码块唯一标识符 IDECodeSnippetIdentifier 对应的 string，格式为 8位-4位-4位-4位-12位 的16进制，如：FF167DB4-0C2D-4F6D-9A2B-0C0785239FFB
- 5.  代码块概要 IDECodeSnippetSummary 对应的string，无内容可为空字符串
- 6.  代码块标题 IDECodeSnippetTitle 对应的 string
+ 1. IDECodeSnippetCompletionPrefix 对应 Completion，代码块前缀，唯一
+ 2. IDECodeSnippetCompletionScopes 对应 Avaiability，代码块作用域，多选
+ 3. IDECodeSnippetContents 对应大文本框，代码文本，例如 // MARK: - &lt;#mark name#&gt;
+ 4. IDECodeSnippetIdentifier 自动生成，代码块唯一标识符，格式为 8位-4位-4位-4位-12位 的16进制，如：86BDFF60-EDE0-4904-8983-C666CA2F3024
+ 5. IDECodeSnippetLanguage 对应 Language，代码块编程语言，格式为 Xcode.SourceCodeLanguage.语言
+ 6. IDECodeSnippetSummary 对应 Summary输入框，代码块概要，可为空
+ 7. IDECodeSnippetTitle 对应标题输入框，代码块标题
+ 8. IDECodeSnippetUserSnippet 固定为 true，代码块类型（User）
+ 9. IDECodeSnippetVersion 固定为 2，代码块版本
  
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>IDECodeSnippetCompletionPrefix</key>
-    <string>代码块前缀</string>
-    <key>IDECodeSnippetCompletionScopes</key>
-    <array>
-        <string>代码块作用域</string>
-    </array>
-    <key>IDECodeSnippetContents</key>
-    <string>代码块内容</string>
-    <key>IDECodeSnippetIdentifier</key>
-    <string>代码块唯一标识符</string>
-    <key>IDECodeSnippetLanguage</key>
-    <string>Xcode.SourceCodeLanguage.Objective-C</string>
-    <key>IDECodeSnippetSummary</key>
-    <string>代码块概要</string>
-    <key>IDECodeSnippetTitle</key>
-    <string>代码块标题</string>
-    <key>IDECodeSnippetUserSnippet</key>
-    <true/>
-    <key>IDECodeSnippetVersion</key>
-    <integer>2</integer>
-</dict>
-</plist>
+ 替换：
+ 
+    FastCodeTitle 标题
+    FastCodeSummary 概要
+    FastCodeContents 内容
+    FastCodeLanguage 编程语言
+    FastCodePrefix 前缀
+    FastCodeScopes 作用域
+    FastCodeIdentifier 唯一标识符
+ 
+ 
+ 源文件：
+ 
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+ <plist version="1.0">
+ <dict>
+     <key>IDECodeSnippetCompletionPrefix</key>
+     <string>hzmark</string>
+     <key>IDECodeSnippetCompletionScopes</key>
+     <array>
+         <string>All</string>
+     </array>
+     <key>IDECodeSnippetContents</key>
+     <string>// MARK: - &lt;#mark name#&gt;</string>
+     <key>IDECodeSnippetIdentifier</key>
+     <string>86BDFF60-EDE0-4904-8983-C666CA2F3024</string>
+     <key>IDECodeSnippetLanguage</key>
+     <string>Xcode.SourceCodeLanguage.Swift</string>
+     <key>IDECodeSnippetSummary</key>
+     <string></string>
+     <key>IDECodeSnippetTitle</key>
+     <string>HZ MARK</string>
+     <key>IDECodeSnippetUserSnippet</key>
+     <true/>
+     <key>IDECodeSnippetVersion</key>
+     <integer>2</integer>
+ </dict>
+ </plist>
 
+ 
+ 模版：
+ 
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+ <plist version="1.0">
+ <dict>
+     <key>IDECodeSnippetCompletionPrefix</key>
+     <string>FastCodePrefix</string>
+     <key>IDECodeSnippetCompletionScopes</key>
+     <array>
+         FastCodeScopes
+     </array>
+     <key>IDECodeSnippetContents</key>
+     <string>FastCodeContents</string>
+     <key>IDECodeSnippetIdentifier</key>
+     <string>FastCodeIdentifier</string>
+     <key>IDECodeSnippetLanguage</key>
+     <string>Xcode.SourceCodeLanguage.FastCodeLanguage</string>
+     <key>IDECodeSnippetSummary</key>
+     <string>FastCodeSummary</string>
+     <key>IDECodeSnippetTitle</key>
+     <string>FastCodeTitle</string>
+     <key>IDECodeSnippetUserSnippet</key>
+     <true/>
+     <key>IDECodeSnippetVersion</key>
+     <integer>2</integer>
+ </dict>
+ </plist>
+
+
+ 补充：
+ 
+ <key>IDECodeSnippetCompletionScopes</key>
+ <array>
+     <string>ClassInterfaceMethods</string>
+     <string>TopLevel</string>
+     <string>CodeBlock</string>
+     <string>ClassInterfaceVariables</string>
+ </array>
+ 
 */

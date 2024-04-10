@@ -21,12 +21,13 @@ let kFCFilePathPrefix = "file://"
 let kFCHardDiskName = "Macintosh HD"
 
 // code
-let kFCIDECodeSnippetCompletionPrefix = "代码块前缀"
-let kFCIDECodeSnippetCompletionScopes = "代码块作用域"
-let kFCIDECodeSnippetContents = "代码块内容"
-let kFCIDECodeSnippetIdentifier = "代码块唯一标识符"
-let kFCIDECodeSnippetSummary = "代码块概要"
-let kFCIDECodeSnippetTitle = "代码块标题"
+let kFCIDECodeSnippetLnaguage = "FastCodeLanguage"
+let kFCIDECodeSnippetTitle = "FastCodeTitle"
+let kFCIDECodeSnippetSummary = "FastCodeSummary"
+let kFCIDECodeSnippetContents = "FastCodeContents"
+let kFCIDECodeSnippetCompletionPrefix = "FastCodePrefix"
+let kFCIDECodeSnippetCompletionScopes = "FastCodeScopes"
+let kFCIDECodeSnippetIdentifier = "FastCodeIdentifier"
 
 // scpt
 let kFCScptFilesName = "FCScptFilesName"
